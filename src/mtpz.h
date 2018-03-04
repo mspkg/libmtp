@@ -45,7 +45,11 @@ static inline int mtpz_loaddata(void)
 
 #endif
 
+#if defined(__APPLE__) || defined(__darwin__)
+extern int use_mtpz;
+#else
 int use_mtpz;
+#endif
 
 #endif /* LIBMTP_H_INCLUSION_GUARD */
 
