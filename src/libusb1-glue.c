@@ -151,7 +151,11 @@ static LIBMTP_error_number_t init_usb()
    * We use the same level debug between MTP and USB.
    */
   if (libusb1_initialized)
+#if defined(__BSD__) || defined(__APPLE__) || defined(__darwin__)
+     libusb_exit(NULL);
+#else
      return LIBMTP_ERROR_NONE;
+#endif
 
   if (libusb_init(NULL) < 0) {
     LIBMTP_ERROR("Libusb1 init failed\n");
