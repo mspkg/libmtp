@@ -3323,7 +3323,7 @@ uint16_t ptp_olympus_getcameraid (PTPParams*, unsigned char**, unsigned int *);
 static inline int
 ptp_operation_issupported(PTPParams* params, uint16_t operation)
 {
-	unsigned int i=0;
+	uint32_t i=0;
 
 	for (;i<params->deviceinfo.OperationsSupported_len;i++) {
 		if (params->deviceinfo.OperationsSupported[i]==operation)
