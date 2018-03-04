@@ -9233,6 +9233,27 @@ int LIBMTP_TruncateObject(LIBMTP_mtpdevice_t *device, uint32_t const id,
 
 
 /**
+ * Get thumbnail format of a file.
+ * @param device a pointer to the device to get thumbnail format of.
+ * @param id the object ID of the file to get thumbnail format of.
+ * @return 0 on success, any other value means failure.
+ */
+int LIBMTP_Get_Thumbnail_Format(LIBMTP_mtpdevice_t *device, uint32_t const id,
+                                uint16_t *format)
+{
+  PTPParams *params = (PTPParams *) device->params;
+  uint16_t ret;
+
+  PTPObjectInfo object_info;
+  ret = ptp_getobjectinfo(params, id, &object_info);
+  if (ret != PTP_RC_OK)
+    return -1;
+
+  *format = object_info.ThumbFormat;
+  return 0;
+}
+
+/**
  * This routine updates an album based on the metadata
  * supplied. If the <code>tracks</code> field of the metadata
  * contains a track listing, these tracks will be added to the
