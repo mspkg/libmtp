@@ -909,6 +909,8 @@ LIBMTP_file_t * LIBMTP_Get_Files_And_Folders(LIBMTP_mtpdevice_t *,
 					     uint32_t const,
 					     uint32_t const);
 LIBMTP_file_t *LIBMTP_Get_Filemetadata(LIBMTP_mtpdevice_t *, uint32_t const);
+int LIBMTP_Get_File_Chunk(LIBMTP_mtpdevice_t*, uint32_t, uint32_t, uint32_t,
+                          unsigned char**, uint32_t*);
 int LIBMTP_Get_File_To_File(LIBMTP_mtpdevice_t*, uint32_t, char const * const,
 			LIBMTP_progressfunc_t const, void const * const);
 int LIBMTP_Get_File_To_File_Descriptor(LIBMTP_mtpdevice_t*,

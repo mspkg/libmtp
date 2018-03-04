@@ -5124,6 +5124,56 @@ LIBMTP_track_t *LIBMTP_Get_Trackmetadata(LIBMTP_mtpdevice_t *device, uint32_t co
 }
 
 /**
+ * This copies a chunk of a file off the device to memory.
+ * @param device a pointer to the device to get the track from.
+ * @param id the file ID of the file to retrieve.
+ * @param offset the offset of the file to read from.
+ * @param count the amount of data to read.
+ * @param data a pointer to the data from the device. Must be
+ *             <coded>free()</code>:ed by the caller after use.
+ * @param datalen the amount of data written to <code>data</code>.
+ * @return 0 if the transfer was successful, any other value means
+ *           failure.
+ */
+int LIBMTP_Get_File_Chunk(LIBMTP_mtpdevice_t* device, uint32_t id,
+                          uint32_t offset, uint32_t count,
+                          unsigned char** data, uint32_t* datalen)
+{
+  uint16_t ret;
+  PTPParams *params = (PTPParams *) device->params;
+  PTP_USB *ptp_usb = (PTP_USB*) device->usbinfo;
+  PTPObject *ob;
+
+  if (!data || !datalen) {
+    add_error_to_errorstack(device, LIBMTP_ERROR_GENERAL, "LIBMTP_Get_File_Chunk(): Invalid parameter.");
+    return -1;
+  }
+
+  ret = ptp_object_want (params, id, PTPOBJECT_OBJECTINFO_LOADED, &ob);
+  if (ret != PTP_RC_OK) {
+    add_error_to_errorstack(device, LIBMTP_ERROR_GENERAL, "LIBMTP_Get_File_Chunk(): Could not get object info.");
+    return -1;
+  }
+  if (ob->oi.ObjectFormat == PTP_OFC_Association) {
+    add_error_to_errorstack(device, LIBMTP_ERROR_GENERAL, "LIBMTP_Get_File_Chunk(): Bad object format.");
+    return -1;
+  }
+
+  ret = ptp_getpartialobject(params, id, offset, count, data, datalen);
+
+  if (ret == PTP_ERROR_CANCEL) {
+    add_error_to_errorstack(device, LIBMTP_ERROR_CANCELLED, "LIBMTP_Get_File_Chunk(): Cancelled transfer.");
+    return -1;
+  }
+  if (ret != PTP_RC_OK) {
+    add_ptp_error_to_errorstack(device, ret, "LIBMTP_Get_File_Chunk(): Could not get file from device.");
+    return -1;
+  }
+
+  return 0;
+}
+
+/**
  * This is a manual conversion from MTPDataGetFunc to PTPDataGetFunc
  * to isolate the internal type.
  */
